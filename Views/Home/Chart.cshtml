@@ -1,0 +1,45 @@
+@model lab.Models.Student
+@{
+  ViewData["Title"] = "Chart";
+  List<Student> students = ViewBag.Students;
+  var chartJson = ViewBag.ChartJson;
+}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<h1>@ViewData["Title"]</h1>
+
+<div id="pie_chart_3d_div"></div>
+
+@foreach (var student in students) {
+  <div>
+    <p>@student.FirstName, @student.LastName (@student.Department)</p>
+  </div>
+}
+
+<script id="DATA" type="application/json">
+  @chartJson
+</script>
+
+<script type="text/javascript">
+    google.charts.load('current', {
+        packages: ['corechart', 'bar']
+    });
+
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        let jsonData = document.getElementById('DATA').textContent;
+        jsonData = jsonData.replace(/&quot;/g, '"');
+        console.log(jsonData);
+
+        var data = new google.visualization.DataTable(jsonData);
+        var options = { title: 'Count of Students by Department', width: 1000, height: 1000 };
+        options.is3D = true;
+        console.log(data);
+
+        var chart = new google.visualization.PieChart(document.getElementById('pie_chart_3d_div'));
+        chart.draw(data, options);
+    }
+
+</script>
